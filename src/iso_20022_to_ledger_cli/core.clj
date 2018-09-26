@@ -18,19 +18,17 @@
    :type [:CdtDbtInd]
    })
 
-(defn get-attr
-  "Get the attr for the given `path` in the given `entry`.
-  Returns nil if there is no such attr"
+(defn get-path
+  "Get the node for the given `path` in the given `entry`.
+  Returns nil if there is no such node"
   [entry path]
   (some->
    (apply xml1-> entry path)))
 
-(defn get-field
-  "Get the field text for the given `path` in the given `entry`.
-  Returns nil if there is no such field"
-  [entry path]
-  (some->
-   (apply xml1-> entry path) text string/trim))
+(defn get-text
+  "Get the text for the given `node`. Returns nil if there is no text node"
+  [node]
+  (some-> node text string/trim))
 
 (defn get-type [type]
   (case type
@@ -46,11 +44,12 @@
   (let [root (-> file io/file xml/parse zip/xml-zip)]
     (for [entry (xml-> root :Document :BkToCstmrStmt :Stmt :Ntry)]
       (->> (for [[key path] param-mapping
-                 :let [val (cond
-                             (#{:currency} key) (get-attr entry path)
-                             (#{:type} key) (get-type (get-field entry path))
-                             (#{:booking-date :value-date} key) (get-date (get-field entry path))
-                             :else (get-field entry path))]
+                 :let [val (let [node (get-path entry path)]
+                             (cond
+                               (#{:currency} key) node
+                               (#{:type} key) (some-> node get-text get-type)
+                               (#{:booking-date :value-date} key) (some-> node get-text get-date)
+                               :else (some-> node get-text)))]
                  :when (some? val)]
              [key val])
            (into {})))))
