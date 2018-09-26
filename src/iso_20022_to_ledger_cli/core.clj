@@ -7,6 +7,10 @@
             [java-time :as time]
             [clojure.zip :as zip]))
 
+(def default-expense "Expenses:Unknown")
+(def default-account "Assets:Postcheckkonto")
+(def default-payee "Default Payee")
+
 (def param-mapping
   "Mapping from ISO 20022 to parameters. See [ISO 20022](https://en.wikipedia.org/wiki/ISO_20022)"
   {:amount [:Amt]
@@ -53,6 +57,19 @@
                  :when (some? val)]
              [key val])
            (into {})))))
+
+(defn render-entry
+  [entry]
+  (let [{:keys [amount currency booking-date value-date info reference type]} entry]
+    (str
+     (string/join
+      "\n"
+      [(str booking-date
+            (when (and value-date (not= value-date booking-date))
+              (str "=" value-date)))
+       (str "    ; " info)
+       (str "    " default-expense "            " amount)
+       (str "    " default-account)]))))
 
 (defn -main
   "I don't do a whole lot ... yet."
