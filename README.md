@@ -21,6 +21,11 @@ example. Install as follows:
 ``` shell
 sudo apt install libsaxonb-java
 ```
+# TODO
+
+The progam should be able to automatically deduce the payee and the expense
+from the additional entry info. This of course should be configurable by the
+user, or even better use some ML to find the best match.  
 
 # License
 
