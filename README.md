@@ -20,6 +20,10 @@ You will need Leiningen to run this code. Install as follows:
 ``` shell
 sudo apt install leiningen
 ```
+# Todo
+
+- [ ] Explore the use of [clj](https://clojure.org/guides/deps_and_cli)
+  - an interesting example on using [a shebang on top of the file](https://clojureverse.org/t/deps-edn-workflows/2451)
 
 # License
 
