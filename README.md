@@ -25,6 +25,10 @@ sudo apt install leiningen
 - [ ] Explore the use of [clj](https://clojure.org/guides/deps_and_cli)
   - an interesting example on using [a shebang on top of the file](https://clojureverse.org/t/deps-edn-workflows/2451)
 
+# References
+
+The conversion is mostly based on classic reverse engineering of sample xml data. When in doubt also some [official implementation guidelines](https://www.six-group.com/interbank-clearing/dam/downloads/de/standardization/iso/swiss-recommendations/implementation-guidelines-camt.pdf) were consulted.
+
 # License
 
 GPLv3+
