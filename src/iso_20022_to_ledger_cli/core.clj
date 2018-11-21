@@ -8,6 +8,7 @@
             [clojure.zip :as zip]))
 
 (def default-expense "Expenses:Unknown")
+(def default-income "Income:Unknown")
 (def default-account "Assets:Postcheckkonto")
 (def default-payee "Default Payee")
 
@@ -102,6 +103,12 @@
      ";; Currency %s"])
    ammount currency date))
 
+(defn target-account [{:keys [type] :as entry}]
+  (if (= type :debit)  default-expense default-account))
+
+(defn source-account [{:keys [type] :as entry}]
+  (if (= type :debit) default-account default-income))
+
 (defn render-entry
   [entry]
   (let [{:keys [amount currency booking-date value-date info reference type]} entry]
@@ -113,8 +120,8 @@
             (when (and value-date (not= value-date booking-date))
               (str "=" value-date)))
        (str "    ; " info)
-       (str "    " default-expense "            " amount)
-       (str "    " default-account)]))))
+       (str "    " (target-account entry) "            " amount)
+       (str "    " (source-account entry))]))))
 
 (defn render [{:keys [balance entries] :as data}]
   (string/join
