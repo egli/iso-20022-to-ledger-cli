@@ -42,21 +42,44 @@
 (defn get-date [s]
   (time/local-date s))
 
+(defn extract-statements [root]
+  (let [statement (xml1-> root :Document :BkToCstmrStmt :Stmt)]
+    {:id (xml1-> statement :Id text)
+     :from (some-> (xml1-> statement :FrToDt :FrDtTm text) time/local-date-time)
+     :to (some-> (xml1-> statement :FrToDt :ToDtTm text) time/local-date-time)
+     :iban (xml1-> statement :Acct :Id :IBAN text)
+     :account (xml1-> statement :Acct :Ownr :Nm text)}))
+
+(defn extract-balance [root]
+  (->>
+   (for [balance (xml-> root :Document :BkToCstmrStmt :Stmt :Bal)]
+     {:ammount (xml1-> balance :Amt text)
+      :currency (xml1-> balance :Amt (attr :Ccy))
+      :date (xml1-> balance :Dt :Dt text get-date)})
+   (sort-by :date)))
+
+(defn extract-entries [root]
+  (for [entry (xml-> root :Document :BkToCstmrStmt :Stmt :Ntry)]
+    (->> (for [[key path] param-mapping
+               :let [val (let [node (get-path entry path)]
+                           (cond
+                             (#{:currency} key) node
+                             (#{:type} key) (some-> node get-text get-type)
+                             (#{:booking-date :value-date} key) (some-> node get-text get-date)
+                             :else (some-> node get-text)))]
+               :when (some? val)]
+           [key val])
+         (into {}))))
+
 (defn read-file
-  "Read an export file from VUBIS and return a map with all the data"
+  "Read an iso20022 file and return a map with all the data"
   [file]
-  (let [root (-> file io/file xml/parse zip/xml-zip)]
-    (for [entry (xml-> root :Document :BkToCstmrStmt :Stmt :Ntry)]
-      (->> (for [[key path] param-mapping
-                 :let [val (let [node (get-path entry path)]
-                             (cond
-                               (#{:currency} key) node
-                               (#{:type} key) (some-> node get-text get-type)
-                               (#{:booking-date :value-date} key) (some-> node get-text get-date)
-                               :else (some-> node get-text)))]
-                 :when (some? val)]
-             [key val])
-           (into {})))))
+  (let [root (-> file io/file xml/parse zip/xml-zip)
+        statements (extract-statements root)
+        balance (extract-balance root)
+        entries (extract-entries root)]
+    (merge statements {:balance balance :entries entries})))
+
 
 (defn render-entry
   [entry]
