@@ -80,6 +80,27 @@
         entries (extract-entries root)]
     (merge statements {:balance balance :entries entries})))
 
+(defn render-statements [{:keys [id from to iban account]}]
+  (format
+   (string/join
+    \newline
+    [";; Id: %s"
+     ";; From: %s"
+     ";; To: %s"
+     ";; IBAN: %s"
+     ";; Account: %s"])
+   id from to iban account))
+
+(defn render-balance [{:keys [ammount currency date]}]
+  (format
+   (string/join
+    \newline
+    ["" ; add a newline
+     ";; Balance"
+     ";; Date %s"
+     ";; Amount: %s"
+     ";; Currency %s"])
+   ammount currency date))
 
 (defn render-entry
   [entry]
@@ -87,12 +108,20 @@
     (str
      (string/join
       "\n"
-      [(str booking-date
+      ["" ; add an empty line
+       (str booking-date
             (when (and value-date (not= value-date booking-date))
               (str "=" value-date)))
        (str "    ; " info)
        (str "    " default-expense "            " amount)
        (str "    " default-account)]))))
+
+(defn render [{:keys [balance entries] :as data}]
+  (string/join
+   \newline
+   (concat (map render-statements [data])
+           (map render-balance balance)
+           (map render-entry entries))))
 
 (defn -main
   "I don't do a whole lot ... yet."
