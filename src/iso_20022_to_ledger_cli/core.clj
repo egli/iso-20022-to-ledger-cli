@@ -103,10 +103,10 @@
      ";; Currency %s"])
    ammount currency date))
 
-(defn target-account [{:keys [type] :as entry}]
+(defn get-target-account [{:keys [type] :as entry}]
   (if (= type :debit)  default-expense default-account))
 
-(defn source-account [{:keys [type] :as entry}]
+(defn get-source-account [{:keys [type] :as entry}]
   (if (= type :debit) default-account default-income))
 
 (defn render-entry
@@ -122,8 +122,8 @@
             " "
             default-payee)
        (str "    ; " info)
-       (str "    " (target-account entry) "            " amount)
-       (str "    " (source-account entry))]))))
+       (str "    " (get-target-account entry) "            " amount)
+       (str "    " (get-source-account entry))]))))
 
 (defn render [{:keys [balance entries] :as data}]
   (string/join
