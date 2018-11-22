@@ -9,8 +9,8 @@
 
 (def default-expense "Expenses:Unknown")
 (def default-income "Income:Unknown")
-(def default-account "Assets:Postcheckkonto")
-(def default-payee "Default Payee")
+(def default-account "Assets:Unknown")
+(def default-payee "Unknown Payee")
 
 (def param-mapping
   "Mapping from ISO 20022 to parameters. See [ISO 20022](https://en.wikipedia.org/wiki/ISO_20022)"
@@ -118,7 +118,9 @@
       ["" ; add an empty line
        (str booking-date
             (when (and value-date (not= value-date booking-date))
-              (str "=" value-date)))
+              (str "=" value-date))
+            " "
+            default-payee)
        (str "    ; " info)
        (str "    " (target-account entry) "            " amount)
        (str "    " (source-account entry))]))))
