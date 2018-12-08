@@ -1,11 +1,12 @@
 (ns iso-20022-to-ledger-cli.core
   (:gen-class)
   (:require [clojure.data.zip.xml :refer [attr text xml-> xml1->]]
+            [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.string :as string]
             [clojure.xml :as xml]
-            [java-time :as time]
-            [clojure.zip :as zip]))
+            [clojure.zip :as zip]
+            [java-time :as time]))
 
 (def default-expense "Expenses:Unknown")
 (def default-income "Income:Unknown")
@@ -155,4 +156,6 @@
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
+  (let [config (with-open [r (io/reader "config.edn")]
+                 (edn/read (java.io.PushbackReader. r)))])
   (println "Hello, World!"))
