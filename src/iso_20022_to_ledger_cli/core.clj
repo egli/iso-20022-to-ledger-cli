@@ -103,34 +103,54 @@
      ";; Currency %s"])
    ammount currency date))
 
-(defn get-target-account [{:keys [type] :as entry}]
-  (if (= type :debit)  default-expense default-account))
+(defn get-account [{:keys [info]} {:keys [mapping i18n] :as config} not-found]
+  (let [account (some
+                 (fn [[regexp account _]]
+                   (when (re-find (re-pattern regexp) info) account))
+                 (partition 3 mapping))]
+    (cond
+      (keyword? account) (get i18n account (name account))
+      (string? account) account
+      :else not-found)))
 
-(defn get-source-account [{:keys [type] :as entry}]
+(defn get-target-account [{:keys [type] :as entry} {:keys [default-account default-expense] :as config}]
+  (if (= type :debit) (get-account entry config default-expense) default-account))
+
+(defn get-source-account [{:keys [type] :as entry} {:keys [default-account default-income] :as config}]
   (if (= type :debit) default-account default-income))
 
-(defn render-entry
-  [entry]
-  (let [{:keys [amount currency booking-date value-date info reference type]} entry]
-    (str
-     (string/join
-      "\n"
-      ["" ; add an empty line
-       (str booking-date
-            (when (and value-date (not= value-date booking-date))
-              (str "=" value-date))
-            " "
-            default-payee)
-       (str "    ; " info)
-       (str "    " (get-target-account entry) "            " amount)
-       (str "    " (get-source-account entry))]))))
+(defn get-payee [{:keys [info] :as entry} {:keys [mapping i18n] :as config} not-found]
+  (let [payee (some
+               (fn [[regexp _ payee]]
+                 (when (re-find (re-pattern regexp) info) payee))
+               (partition 3 mapping))]
+    (cond
+      (keyword? payee) (get i18n payee (name payee))
+      (string? payee) payee
+      :else not-found)))
 
-(defn render [{:keys [balance entries] :as data}]
+(defn render-entry
+  [{:keys [amount currency booking-date value-date info reference] :as entry}
+   {:keys [mapping default-payee] :as config}]
+  (str
+   (string/join
+    "\n"
+    ["" ; add an empty line
+     (str booking-date
+          (when (and value-date (not= value-date booking-date))
+            (str "=" value-date))
+          " "
+          (get-payee entry config default-payee))
+     (str "    ; " info)
+     (str "    " (get-target-account entry config) "            " amount)
+     (str "    " (get-source-account entry config))])))
+
+(defn render [{:keys [balance entries] :as data} config]
   (string/join
    \newline
    (concat (map render-statements [data])
            (map render-balance balance)
-           (map render-entry entries))))
+           (map #(render-entry % config) entries))))
 
 (defn -main
   "I don't do a whole lot ... yet."
