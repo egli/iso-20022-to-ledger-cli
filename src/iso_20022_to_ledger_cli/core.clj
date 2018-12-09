@@ -120,7 +120,7 @@
 (defn get-source-account [{:keys [type] :as entry} {:keys [default-account default-income] :as config}]
   (if (= type :debit) default-account default-income))
 
-(defn get-payee [{:keys [info] :as entry} {:keys [regexps names] :as config} not-found]
+(defn get-payee [{:keys [info] :as entry} {:keys [regexps names default-payee] :as config}]
   (let [payee (some
                (fn [[regexp _ payee]]
                  (when (re-find (re-pattern regexp) info) payee))
@@ -128,11 +128,10 @@
     (cond
       (keyword? payee) (get names payee (name payee))
       (string? payee) payee
-      :else not-found)))
+      :else default-payee)))
 
 (defn render-entry
-  [{:keys [amount currency booking-date value-date info reference] :as entry}
-   {:keys [mapping default-payee] :as config}]
+  [{:keys [amount currency booking-date value-date info reference] :as entry} config]
   (str
    (string/join
     "\n"
@@ -141,7 +140,7 @@
           (when (and value-date (not= value-date booking-date))
             (str "=" value-date))
           " "
-          (get-payee entry config default-payee))
+          (get-payee entry config))
      (str "    ; " info)
      (str "    " (get-target-account entry config) "            " amount)
      (str "    " (get-source-account entry config))])))
