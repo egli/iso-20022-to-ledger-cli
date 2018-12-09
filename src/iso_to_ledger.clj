@@ -1,5 +1,4 @@
-(ns iso-20022-to-ledger-cli.core
-  (:gen-class)
+(ns iso-to-ledger
   (:require [clojure.data.zip.xml :refer [attr text xml-> xml1->]]
             [clojure.edn :as edn]
             [clojure.java.io :as io]

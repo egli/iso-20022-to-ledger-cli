@@ -11,19 +11,14 @@ or even better a pull request.
 # Usage
 
 ``` shell
-lein run iso_20022.xml plain_text.ledger
+clj -m iso-to-ledger iso_20022.xml > plain_text.ledger
 ```
 # Requirements
 
-You will need Leiningen to run this code. Install as follows:
+You will need clj to run this code. Install as described in [Getting
+Started](https://clojure.org/guides/getting_started).
 
-``` shell
-sudo apt install leiningen
-```
 # Todo
-
-- [ ] Explore the use of [clj](https://clojure.org/guides/deps_and_cli)
-  - an interesting example on using [a shebang on top of the file](https://clojureverse.org/t/deps-edn-workflows/2451)
 
 # References
 
