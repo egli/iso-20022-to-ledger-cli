@@ -104,13 +104,13 @@
      ";; Currency %s"])
    ammount currency date))
 
-(defn get-account [{:keys [info]} {:keys [mapping i18n] :as config} not-found]
+(defn get-account [{:keys [info]} {:keys [regexps names] :as config} not-found]
   (let [account (some
                  (fn [[regexp account _]]
                    (when (re-find (re-pattern regexp) info) account))
-                 (partition 3 mapping))]
+                 (partition 3 regexps))]
     (cond
-      (keyword? account) (get i18n account (name account))
+      (keyword? account) (get names account (name account))
       (string? account) account
       :else not-found)))
 
@@ -120,13 +120,13 @@
 (defn get-source-account [{:keys [type] :as entry} {:keys [default-account default-income] :as config}]
   (if (= type :debit) default-account default-income))
 
-(defn get-payee [{:keys [info] :as entry} {:keys [mapping i18n] :as config} not-found]
+(defn get-payee [{:keys [info] :as entry} {:keys [regexps names] :as config} not-found]
   (let [payee (some
                (fn [[regexp _ payee]]
                  (when (re-find (re-pattern regexp) info) payee))
-               (partition 3 mapping))]
+               (partition 3 regexps))]
     (cond
-      (keyword? payee) (get i18n payee (name payee))
+      (keyword? payee) (get names payee (name payee))
       (string? payee) payee
       :else not-found)))
 
