@@ -153,8 +153,10 @@
            (map #(render-entry % config) entries))))
 
 (defn -main
-  "I don't do a whole lot ... yet."
+  "Convert [ISO 20022](https://en.wikipedia.org/wiki/ISO_20022) to [ledger-cli plain text accounting format](https://www.ledger-cli.org) "
   [& args]
   (let [config (with-open [r (io/reader "config.edn")]
-                 (edn/read (java.io.PushbackReader. r)))])
-  (println "Hello, World!"))
+                 (edn/read (java.io.PushbackReader. r)))
+        data (read-file (first args))
+        txt (render data config)]
+    (println txt)))
