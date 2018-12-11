@@ -136,14 +136,12 @@
    (string/join
     "\n"
     ["" ; add an empty line
-     (str booking-date
-          (when (and value-date (not= value-date booking-date))
-            (str "=" value-date))
-          " "
-          (get-payee entry config))
-     (str "    ; " info)
-     (str "    " (get-target-account entry config) "            " amount)
-     (str "    " (get-source-account entry config))])))
+     (if (and value-date (not= value-date booking-date))
+       (format "%tF=%tF %s" booking-date value-date (get-payee entry config))
+       (format "%tF %s" booking-date (get-payee entry config)))
+     (format "    ; %s" info)
+     (format "    %-37s %10.2f" (get-target-account entry config) amount)
+     (format "    %s" (get-source-account entry config))])))
 
 (defn render [{:keys [balance entries] :as data} config]
   (string/join
