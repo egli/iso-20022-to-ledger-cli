@@ -67,6 +67,7 @@
                              (#{:currency} key) node
                              (#{:type} key) (some-> node get-text get-type)
                              (#{:booking-date :value-date} key) (some-> node get-text get-date)
+                             (#{:amount} key) (some-> node get-text bigdec)
                              :else (some-> node get-text)))]
                :when (some? val)]
            [key val])
