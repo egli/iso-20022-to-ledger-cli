@@ -1,0 +1,20 @@
+{;; Each regexps entry contains a regexp, an account and a payee. The
+ ;; account can be either a string or a keyword. Keywords are looked
+ ;; up in the `names` map.
+ :regexps ["COOP" :groceries "Coop"
+           "MIGROS" :groceries "Migros"
+           "BARGELDBEZUG" :cash "Bargeldbezug"
+           "BONUSCARD.CH" :visa "Credit Card"
+           "ACME INC" "Income:Salary" "Salary"]
+
+ ;; If accounts above are defined using keywords the actual string if
+ ;; defined in the `names` map.
+ :names {:groceries "Expenses:Groceries"
+         :cash "Assets:Cash"
+         :visa "Liabilities:Visa"}
+
+ ;; Defaults for payee, account, expense and income
+ :default-payee "Unknown payee"
+ :default-account "Assets:Checking"
+ :default-expense "Expenses:Unknown"
+ :default-income "Income:Salary"}
