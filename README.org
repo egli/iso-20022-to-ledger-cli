@@ -23,6 +23,11 @@ You will need ~clj~ to run this code. Install as described in
 - [ ] Add some machine learning to classify the transactions,
   i.e. assign the right account and payee to a transaction.
 
+* Feedback
+
+If you have any suggestions or problems let me know. Issues and Pull
+Requests are very welcome.
+
 * References
 
 The conversion is mostly based on classic reverse engineering of
