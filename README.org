@@ -15,7 +15,7 @@ clj -m iso-to-ledger iso_20022.xml > plain_text.ledger
 
 * Requirements
 
-You will need clj to run this code. Install as described in
+You will need ~clj~ to run this code. Install as described in
 [[https://clojure.org/guides/getting_started][Getting Started]].
 
 * Todo
