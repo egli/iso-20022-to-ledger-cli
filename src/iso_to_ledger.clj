@@ -79,7 +79,7 @@
   (let [root (-> file io/file xml/parse zip/xml-zip)
         statements (extract-statements root)
         balance (extract-balance root)
-        entries (extract-entries root)]
+        entries (sort-by :booking-date (extract-entries root))]
     (merge statements {:balance balance :entries entries})))
 
 (defn render-statements [{:keys [id from to iban account]}]
