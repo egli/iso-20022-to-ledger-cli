@@ -140,7 +140,7 @@
        (format "%tF=%tF %s" booking-date value-date (get-payee entry config))
        (format "%tF %s" booking-date (get-payee entry config)))
      (format "    ; %s" info)
-     (format "    %-37s %10.2f" (get-target-account entry config) amount)
+     (format "    %-37s %10.2f %s" (get-target-account entry config) amount currency)
      (format "    %s" (get-source-account entry config))])))
 
 (defn render [{:keys [balance entries] :as data} config]
