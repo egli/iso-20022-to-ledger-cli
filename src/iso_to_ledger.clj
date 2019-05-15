@@ -98,11 +98,11 @@
    (string/join
     \newline
     ["" ; add a newline
-     ";; Balance"
-     ";; Date %s"
+     ";; Balance:"
+     ";; Date: %s"
      ";; Amount: %s"
-     ";; Currency %s"])
-   ammount currency date))
+     ";; Currency: %s"])
+   date ammount currency))
 
 (defn get-account [{:keys [info]} {:keys [regexps names] :as config} not-found]
   (let [account (some
