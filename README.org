@@ -22,14 +22,15 @@ You will need ~clj~ to run this code. Install as described in
 
 - [ ] Add some machine learning to classify the transactions,
   i.e. assign the right account and payee to a transaction.
-  - [[https://github.com/tomszilagyi/banks2ledger][banks2ledger]] can infer account names via simple Bayesian inference
-    based on your existing ledger file. Generally it seems well
-    thought out and maintained. So maybe we should
-    - join forces, i.e. reduce this package to just iso to csv
-    - use their classifier code
-      - the classifier needs to parse existing ledger files. For that it
-	has a simple hand-crafted parser. It might be interesting to look
-	into a parser that is based on instaparse such as [[https://github.com/tomasd/ledger.parser][ledger.parser]]
+- [[https://github.com/tomszilagyi/banks2ledger][banks2ledger]] can infer account names via simple Bayesian inference
+  based on an existing ledger file. Generally it seems well thought
+  out and maintained. So maybe we should
+  - join forces, i.e. reduce this package to just iso to csv
+  - use their classifier code
+    - the classifier needs to parse existing ledger files. For that it
+      has a simple hand-crafted parser. It might be interesting to
+      look into a parser that is based on instaparse such as
+      [[https://github.com/tomasd/ledger.parser][ledger.parser]]
 
 * Feedback
 
