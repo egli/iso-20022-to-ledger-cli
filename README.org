@@ -11,7 +11,7 @@ or even better a pull request.
 * Usage
 
 #+BEGIN_SRC shell
-clj -m iso-to-ledger iso_20022.xml > plain_text.ledger
+cljojure -m iso-to-ledger iso_20022.xml > plain_text.ledger
 #+END_SRC
 
 If you'd rather just have a csv file and import that with one of the
@@ -19,7 +19,7 @@ many ledger import tools you can convert the iso 20022 file to a csv
 as follows:
 
 #+BEGIN_SRC shell
-clj -m iso-to-csv iso_20022.xml > transactions.csv
+cljojure -m iso-to-csv iso_20022.xml > transactions.csv
 #+END_SRC
 
 * Requirements
