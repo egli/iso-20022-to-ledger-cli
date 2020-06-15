@@ -6,9 +6,7 @@
   [data]
   (let [entries (:entries data)
         [initial-balance final-balance] (map :amount (:balance data))]
-    (->>
-     (concat [initial-balance] (repeat (- (count entries) 2) nil) [final-balance])
-     (map (fn [amnt] {:balance amnt})))))
+    (concat [initial-balance] (repeat (- (count entries) 2) nil) [final-balance])))
 
 (defn- credit? [{type :type}]
   (= type :credit))
@@ -31,6 +29,6 @@
                    (:entries data)
                    (map add-amount-in)
                    (map add-amount-out)
-                   (map merge balances))
+                   (map (fn [v m] (assoc m :balance v)) balances))
           header (->> entries first keys (map name))]
       (csv/write-csv *out* (conj (->> entries (map vals)) header)))))
