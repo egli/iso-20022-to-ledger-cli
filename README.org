@@ -22,6 +22,30 @@ as follows:
 cljojure -m iso-to-csv iso_20022.xml > transactions.csv
 #+END_SRC
 
+This will generate a csv along the lines of
+
+| amount | amount-in | type    | booking-date | currency | reference | balance | amount-out | info     | value-date |
+|--------+-----------+---------+--------------+----------+-----------+---------+------------+----------+------------|
+|   8.00 |           | :debit  |   2020-01-02 | CHF      |     12345 |  100.00 |       8.00 | txn info | 2019-01-02 |
+|  10.00 |     10.00 | :credit |   2020-01-03 | CHF      |     67890 |  102.00 |            | txn info | 2019-01-03 |
+
+which you can import using hledger and the following rules file
+
+#+BEGIN_SRC shell
+hledger -f 2020.journal import transactions.csv
+#+END_SRC
+
+#+BEGIN_SRC
+account1 Assets:Postcheck
+
+fields _, amount-in, _, date, _, reference, balance, amount-out, comment, date2
+
+skip 1
+
+currency CHF 
+
+#+END_SRC
+
 * Requirements
 
 You will need ~clj~ to run this code. Install as described in
