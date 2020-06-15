@@ -54,7 +54,7 @@
 (defn extract-balance [root]
   (->>
    (for [balance (xml-> root :Document :BkToCstmrStmt :Stmt :Bal)]
-     {:ammount (xml1-> balance :Amt text)
+     {:amount (xml1-> balance :Amt text)
       :currency (xml1-> balance :Amt (attr :Ccy))
       :date (xml1-> balance :Dt :Dt text get-date)})
    (sort-by :date)))
@@ -93,7 +93,7 @@
      ";; Account: %s"])
    id from to iban account))
 
-(defn render-balance [{:keys [ammount currency date]}]
+(defn render-balance [{:keys [amount currency date]}]
   (format
    (string/join
     \newline
@@ -102,7 +102,7 @@
      ";; Date: %s"
      ";; Amount: %s"
      ";; Currency: %s"])
-   date ammount currency))
+   date amount currency))
 
 (defn get-account [{:keys [info]} {:keys [regexps names] :as config} not-found]
   (let [account (some
