@@ -2,10 +2,13 @@
   (:require [clojure.data.csv :as csv]
             [iso-to-ledger :as ledger]))
 
-(defn- add-balances
-  [initial-balance final-balance entries]
-  (let [balances (concat [initial-balance] (repeat (- (count entries) 2) nil) [final-balance])]
-    (map (fn [entry bal] (assoc entry :balance bal)) entries balances)))
+(defn- balances
+  [data]
+  (let [entries (:entries data)
+        [initial-balance final-balance] (map :amount (:balance data))]
+    (->>
+     (concat [initial-balance] (repeat (- (count entries) 2) nil) [final-balance])
+     (map (fn [amnt] {:balance amnt})))))
 
 (defn- credit? [{type :type}]
   (= type :credit))
@@ -23,11 +26,11 @@
   [& args]
   (doseq [file args]
     (let [data (-> file ledger/read-file)
-          [initial-balance final-balance] (map :amount (:balance data))
+          balances (balances data)
           entries (->>
                    (:entries data)
                    (map add-amount-in)
                    (map add-amount-out)
-                   (add-balances initial-balance final-balance))
+                   (map merge balances))
           header (->> entries first keys (map name))]
       (csv/write-csv *out* (conj (->> entries (map vals)) header)))))
