@@ -5,8 +5,8 @@
 (defn- balances
   [data]
   (let [entries (:entries data)
-        [initial-balance final-balance] (map :amount (:balance data))]
-    (concat [initial-balance] (repeat (- (count entries) 2) nil) [final-balance])))
+        final-balance (second (map :amount (:balance data)))]
+    (concat (repeat (- (count entries) 1) nil) [final-balance])))
 
 (defn- credit? [{type :type}]
   (= type :credit))
