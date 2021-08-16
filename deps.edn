@@ -1,6 +1,14 @@
 {:deps
- {clj-time {:mvn/version "0.14.2"}
+ {clj-time/clj-time {:mvn/version "0.14.2"}
   org.clojure/data.xml {:mvn/version "0.2.0-alpha5"}
   org.clojure/data.zip {:mvn/version "0.1.2"}
   org.clojure/data.csv {:mvn/version "0.1.4"}
-  clojure.java-time {:mvn/version "0.3.2"}}}
+  clojure.java-time/clojure.java-time {:mvn/version "0.3.2"}}
+
+ :aliases
+ {;; build an uberjar (application) with AOT compilation by default:
+  :uberjar {:replace-deps {com.github.seancorfield/depstar {:mvn/version "2.1.278"}}
+            :exec-fn hf.depstar/uberjar
+            :exec-args {:aot true
+                        :main-class iso-to-csv}}}
+ }

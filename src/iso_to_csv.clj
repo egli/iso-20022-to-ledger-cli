@@ -1,6 +1,7 @@
 (ns iso-to-csv
   (:require [clojure.data.csv :as csv]
-            [iso-to-ledger :as ledger]))
+            [iso-to-ledger :as ledger])
+  (:gen-class))
 
 (defn- balances
   [data]
@@ -31,4 +32,5 @@
                    (map add-amount-out)
                    (map (fn [v m] (assoc m :balance v)) balances))
           header (->> entries first keys (map name))]
-      (csv/write-csv *out* (conj (->> entries (map vals)) header)))))
+      (csv/write-csv *out* (conj (->> entries (map vals)) header))
+      (flush))))

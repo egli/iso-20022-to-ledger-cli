@@ -10,6 +10,12 @@ or even better a pull request.
 
 * Usage
 
+You can use the tool in two ways: You can either directly run it via
+~clojure~ or you can compile it to a jar file first and then run it
+via java.
+
+** Run clojure directly
+
 #+BEGIN_SRC shell
 clojure -m iso-to-ledger iso_20022.xml > plain_text.ledger
 #+END_SRC
@@ -29,7 +35,28 @@ This will generate a csv along the lines of
 |   8.00 |           | :debit  |   2020-01-02 | CHF      |     12345 |  100.00 |       8.00 | txn info | 2019-01-02 |
 |  10.00 |     10.00 | :credit |   2020-01-03 | CHF      |     67890 |  102.00 |            | txn info | 2019-01-03 |
 
-which you can import using hledger and the following rules file
+See below how this csv can be imported.
+
+** Creating a jar
+
+You can create a jar file as follows:
+
+#+BEGIN_SRC shell
+clojure -X:uberjar :jar iso-20022-to-ledger.jar
+#+END_SRC
+
+After that you can run the tool as follows:
+
+#+BEGIN_SRC shell
+java -jar iso-20022-to-ledger.jar iso_20022.xml > transactions.csv
+#+END_SRC
+
+This will give you a csv file that you can import.
+
+** Importing the csv
+
+You can import the generated csv using hledger and the following rules
+file
 
 #+BEGIN_SRC shell
 hledger -f 2020.journal import transactions.csv
@@ -43,8 +70,8 @@ fields _, amount-in, _, date, _, reference, balance, amount-out, comment, date2
 skip 1
 
 currency CHF 
-
 #+END_SRC
+
 
 * Requirements
 
