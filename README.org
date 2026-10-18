@@ -1,7 +1,7 @@
 #+TITLE: ISO 20022 to ledger-cli
 
-Convert [[https://en.wikipedia.org/wiki/ISO_20022][ISO 20022]] to the [[https://www.ledger-cli.org][ledger-cli]] plain text accounting format or
-optionally to plain old csv.
+Convert [[https://en.wikipedia.org/wiki/ISO_20022][ISO 20022]] (camt.053/camt.054) bank statements to csv, ready
+for import into [[https://hledger.org][hledger]] or any other [[https://www.ledger-cli.org][ledger-cli]] import tool.
 
 Obviously this goes without saying: This software is provided "as is"
 without warranty of any kind. If your ledger statements are incorrect
@@ -10,87 +10,43 @@ or even better a pull request.
 
 * Usage
 
-You can use the tool in two ways: You can either directly run it via
-~clojure~ or you can compile it to a jar file first and then run it
-via java.
-
-** Run clojure directly
-
 #+BEGIN_SRC shell
-clojure -m iso-to-ledger iso_20022.xml > plain_text.ledger
+xsltproc camt-to-csv.xsl statement.xml > statement.csv
+hledger import statement.csv --rules camt.rules
 #+END_SRC
 
-If you'd rather just have a csv file and import that with one of the
-many ledger import tools you can convert the iso 20022 file to a csv
-as follows:
+The csv has one row per entry, sorted by booking date, with the
+columns
+=date,value-date,amount,currency,reference,description,counterparty,iban,message,balance=.
+Batch entries (several payments booked as one entry) get one row per
+payment. =counterparty= and =iban= are the other party of the payment
+and =message= is the payment message, when the bank provides them.
+Debits are negative. The closing balance of the statement is in the
+=balance= column of the last row, which hledger checks as a balance
+assertion. If the statement is imported into a journal that doesn't
+contain the balance up to the start of the statement, that check
+fails; use =-I= to skip it.
 
-#+BEGIN_SRC shell
-clojure -m iso-to-csv iso_20022.xml > transactions.csv
-#+END_SRC
-
-This will generate a csv along the lines of
-
-| amount | amount-in | type    | booking-date | currency | reference | balance | amount-out | info     | value-date |
-|--------+-----------+---------+--------------+----------+-----------+---------+------------+----------+------------|
-|   8.00 |           | :debit  |   2020-01-02 | CHF      |     12345 |  100.00 |       8.00 | txn info | 2019-01-02 |
-|  10.00 |     10.00 | :credit |   2020-01-03 | CHF      |     67890 |  102.00 |            | txn info | 2019-01-03 |
-
-See below how this csv can be imported.
-
-** Creating a jar
-
-You can create a jar file as follows:
-
-#+BEGIN_SRC shell
-clojure -X:uberjar :jar iso-20022-to-ledger.jar
-#+END_SRC
-
-After that you can run the tool as follows:
-
-#+BEGIN_SRC shell
-java -jar iso-20022-to-ledger.jar iso_20022.xml > transactions.csv
-#+END_SRC
-
-This will give you a csv file that you can import.
-
-** Importing the csv
-
-You can import the generated csv using hledger and the following rules
-file
-
-#+BEGIN_SRC shell
-hledger -f 2020.journal import transactions.csv
-#+END_SRC
-
-#+BEGIN_SRC
-account1 Assets:Postcheck
-
-fields _, amount-in, _, date, _, reference, balance, amount-out, comment, date2
-
-skip 1
-
-currency CHF 
-#+END_SRC
-
+Adapt =account1= in =camt.rules= to your bank account. hledger books
+the other side to =expenses:unknown= or =income:unknown=; add =if=
+blocks to =camt.rules= to assign accounts (see the [[https://hledger.org/hledger.html#csv][hledger csv docs]]).
 
 * Requirements
 
-You will need ~clj~ to run this code. Install as described in
-[[https://clojure.org/guides/getting_started][Getting Started]].
+=xsltproc= (package =xsltproc= on Debian/Ubuntu, preinstalled on
+macOS).
+
+* Test
+
+#+BEGIN_SRC shell
+xsltproc camt-to-csv.xsl test/sample.xml | diff - test/sample.csv
+#+END_SRC
 
 * Todo
 
-- [ ] Add some machine learning to classify the transactions,
-  i.e. assign the right account and payee to a transaction.
-- [[https://github.com/tomszilagyi/banks2ledger][banks2ledger]] can infer account names via simple Bayesian inference
-  based on an existing ledger file. Generally it seems well thought
-  out and maintained. So maybe we should
-  - join forces, i.e. reduce this package to just iso to csv
-  - use their classifier code
-    - the classifier needs to parse existing ledger files. For that it
-      has a simple hand-crafted parser. It might be interesting to
-      look into a parser that is based on instaparse such as
-      [[https://github.com/tomasd/ledger.parser][ledger.parser]]
+- [ ] Classify transactions, i.e. assign the right account and payee
+  to a transaction. [[https://github.com/tomszilagyi/banks2ledger][banks2ledger]] can infer account names via simple
+  Bayesian inference based on an existing ledger file and reads csv.
 
 * Feedback
 

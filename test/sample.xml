@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Covers: entries out of order, missing AcctSvcrRef/ValDt/TxDtls, DtTm dates,
+     quotes and commas in the text, negative (DBIT) closing balance,
+     counterparty for debit (Cdtr) and credit (Dbtr, newer Pty nesting),
+     batch entry split into one row per payment. -->
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:camt.053.001.04">
+  <BkToCstmrStmt>
+    <Stmt>
+      <Id>1</Id>
+      <Acct><Id><IBAN>CH0000000000000000000</IBAN></Id></Acct>
+      <Bal>
+        <Tp><CdOrPrtry><Cd>OPBD</Cd></CdOrPrtry></Tp>
+        <Amt Ccy="CHF">0.00</Amt><CdtDbtInd>CRDT</CdtDbtInd>
+        <Dt><Dt>2018-02-28</Dt></Dt>
+      </Bal>
+      <Bal>
+        <Tp><CdOrPrtry><Cd>CLBD</Cd></CdOrPrtry></Tp>
+        <Amt Ccy="CHF">435.00</Amt><CdtDbtInd>DBIT</CdtDbtInd>
+        <Dt><Dt>2018-03-31</Dt></Dt>
+      </Bal>
+      <Ntry>
+        <Amt Ccy="CHF">20.00</Amt><CdtDbtInd>CRDT</CdtDbtInd>
+        <BookgDt><DtTm>2018-03-05T10:00:00</DtTm></BookgDt>
+        <AddtlNtryInf>GUTSCHRIFT COOP "RETOURE", ZUERICH</AddtlNtryInf>
+        <NtryDtls><TxDtls>
+          <Amt Ccy="CHF">20.00</Amt><CdtDbtInd>CRDT</CdtDbtInd>
+          <RltdPties>
+            <Dbtr><Pty><Nm>Coop Genossenschaft</Nm></Pty></Dbtr>
+            <DbtrAcct><Id><IBAN>CH1100000000000000001</IBAN></Id></DbtrAcct>
+            <Cdtr><Pty><Nm>Account Owner</Nm></Pty></Cdtr>
+          </RltdPties>
+          <RmtInf><Ustrd>Retoure "Bon" 4711</Ustrd></RmtInf>
+        </TxDtls></NtryDtls>
+      </Ntry>
+      <Ntry>
+        <Amt Ccy="CHF">150.00</Amt><CdtDbtInd>DBIT</CdtDbtInd>
+        <BookgDt><Dt>2018-03-01</Dt></BookgDt>
+        <ValDt><Dt>2018-02-28</Dt></ValDt>
+        <AcctSvcrRef>REF1</AcctSvcrRef>
+        <AddtlNtryInf>  E-FINANCE   MIGROS
+          ZUERICH </AddtlNtryInf>
+      </Ntry>
+      <Ntry>
+        <Amt Ccy="CHF">300.00</Amt><CdtDbtInd>DBIT</CdtDbtInd>
+        <BookgDt><Dt>2018-03-15</Dt></BookgDt>
+        <ValDt><Dt>2018-03-15</Dt></ValDt>
+        <AcctSvcrRef>REF2</AcctSvcrRef>
+        <AddtlNtryInf>SAMMELAUFTRAG</AddtlNtryInf>
+        <NtryDtls>
+          <Btch><NbOfTxs>2</NbOfTxs></Btch>
+          <TxDtls>
+            <Amt Ccy="CHF">100.00</Amt><CdtDbtInd>DBIT</CdtDbtInd>
+            <RltdPties>
+              <Dbtr><Nm>Account Owner</Nm></Dbtr>
+              <Cdtr><Nm>Musikschule</Nm></Cdtr>
+              <CdtrAcct><Id><IBAN>CH2200000000000000002</IBAN></Id></CdtrAcct>
+            </RltdPties>
+            <RmtInf><Ustrd>Semester 1</Ustrd></RmtInf>
+          </TxDtls>
+          <TxDtls>
+            <Amt Ccy="CHF">200.00</Amt><CdtDbtInd>DBIT</CdtDbtInd>
+            <RltdPties>
+              <Cdtr><Nm>Kinderarzt, Dr. X</Nm></Cdtr>
+              <CdtrAcct><Id><IBAN>CH3300000000000000003</IBAN></Id></CdtrAcct>
+            </RltdPties>
+          </TxDtls>
+        </NtryDtls>
+      </Ntry>
+      <Ntry>
+        <Amt Ccy="CHF">5.00</Amt><CdtDbtInd>DBIT</CdtDbtInd>
+        <BookgDt><Dt>2018-03-10</Dt></BookgDt>
+        <ValDt><Dt>2018-03-10</Dt></ValDt>
+        <AcctSvcrRef>REF3</AcctSvcrRef>
+        <AddtlNtryInf>KONTOFUEHRUNG</AddtlNtryInf>
+      </Ntry>
+    </Stmt>
+  </BkToCstmrStmt>
+</Document>

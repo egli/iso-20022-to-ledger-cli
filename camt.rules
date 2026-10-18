@@ -1,0 +1,16 @@
+# hledger rules for CSV produced by camt-to-csv.xsl
+#   hledger import statement.csv --rules camt.rules
+skip 1
+fields date, valdate, amount, currency, code, description, counterparty, iban, message, balance
+account1 Assets:Postcheck
+
+# ValDt is optional
+if %valdate .
+  date2 %valdate
+
+# "payee | note": the counterparty becomes the payee, the bank text the note
+if %counterparty .
+  description %counterparty | %description
+
+if %message .
+  comment %message
